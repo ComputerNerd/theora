@@ -373,12 +373,8 @@ static int oc_dec_init(oc_dec_ctx *_dec,const th_info *_info,
   int ret;
   ret=oc_state_init(&_dec->state,_info,3);
   if(ret<0)return ret;
-  ret=oc_huff_trees_copy(_dec->huff_tables,
-   (const ogg_int16_t *const *)_setup->huff_tables);
-  if(ret<0){
-    oc_state_clear(&_dec->state);
-    return ret;
-  }
+  oc_huff_trees_move(_dec->huff_tables,
+   _setup->huff_tables);
   /*For each fragment, allocate one byte for every DCT coefficient token, plus
      one byte for extra-bits for each token, plus one more byte for the long
      EOB run, just in case it's the very last token and has a run length of

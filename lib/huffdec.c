@@ -431,26 +431,18 @@ static size_t oc_huff_tree_size(const ogg_int16_t *_tree,int _node){
   return size;
 }
 
-/*Makes a copy of the given set of Huffman trees.
-  _dst: The array to store the copy in.
-  _src: The array of trees to copy.*/
-int oc_huff_trees_copy(ogg_int16_t *_dst[TH_NHUFFMAN_TABLES],
- const ogg_int16_t *const _src[TH_NHUFFMAN_TABLES]){
+/*Move the Huffman trees to another array.
+  _dst: The array which will have the Huffman trees when complete.
+  _src: The array that will get cleared.*/
+void oc_huff_trees_move(ogg_int16_t *_dst[TH_NHUFFMAN_TABLES],
+ ogg_int16_t *_src[TH_NHUFFMAN_TABLES]){
   int total;
   int i;
   total=0;
   for(i=0;i<TH_NHUFFMAN_TABLES;i++){
-    size_t size;
-    size=oc_huff_tree_size(_src[i],0);
-    total+=size;
-    _dst[i]=(ogg_int16_t *)_ogg_malloc(size*sizeof(*_dst[i]));
-    if(_dst[i]==NULL){
-      while(i-->0)_ogg_free(_dst[i]);
-      return TH_EFAULT;
-    }
-    memcpy(_dst[i],_src[i],size*sizeof(*_dst[i]));
+    _dst[i] = _src[i];
+    _src[i] = NULL;
   }
-  return 0;
 }
 
 /*Frees the memory used by a set of Huffman trees.
